@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">HashPass</string>
+    <string name="word_1">Word 1</string>
+    <string name="word_2">Word 2</string>
+    <string name="word_3">Word 3</string>
+    <string name="word_6">Word 6</string>
+    <string name="word_5">Word 5</string>
+    <string name="word_4">Word 4</string>
+    <string name="enter_your_phrase">Enter your phrase</string>
+    <string name="done">Done</string>
+    <string name="options">Options</string>
+    <string name="open_drawer">open drawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="name_label">Name/Label</string>
+    <string name="username">Username</string>
+    <string name="generate_password">Generate Password</string>
+    <string name="generate">GENERATE</string>
+    <string name="notes">Notes</string>
+    <string name="length">Length</string>
+    <string name="_30_64">30 / 64</string>
+    <string name="password">Password</string>
+    <string name="show">Show</string>
+    <string name="hide">HIDE</string>
+    <string name="delete_msg">Are you sure you would like to delete?</string>
+    <string name="delete_title">Delete?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="remember_message">You must remember this phrase in order to be able to construct your password.</string>
+    <string name="remember_phrase_title">Remember your phrase</string>
+    <string name="ok">OK</string>
+    <string name="new_phrase">New Phrase</string>
+</resources>
