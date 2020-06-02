@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/new_phrase" android:title="@string/new_phrase"/>
-    <item android:id="@+id/saved_itm" android:title="Support The App!"/>
+    <item android:id="@+id/new_phrase" android:title="@string/new_phrase" android:icon="@drawable/ic_autorenew_black_24dp"/>
+    <item android:id="@+id/import_export" android:title="@string/backup_restore" android:icon="@drawable/ic_backup_black_24dp"/>
+    <item android:id="@+id/about" android:title="@string/about" android:icon="@drawable/ic_info_outline_black_24dp"/>
 </menu>

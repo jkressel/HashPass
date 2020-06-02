@@ -20,6 +20,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
@@ -354,6 +357,11 @@ public class EnterPhrase extends AppCompatActivity {
         word5.setOnFocusChangeListener(focus);
         word6.setOnFocusChangeListener(focus);
 
+        new BubbleShowCaseSequence()
+                .addShowCase(buildBubble(word1, "Enter Phrase", "Enter your phrase one word at a time, one word per box.", "EnterWord1")) //First BubbleShowCase to show
+                .addShowCase(buildBubble(fab, "Continue", "Once you have entered your phrase correctly, press to continue", "EnterFab"))
+                .show();
+
 
 
 
@@ -456,6 +464,16 @@ public class EnterPhrase extends AppCompatActivity {
         data.putExtra("phrase", kp.getPhrase());
         setResult(RESULT_OK, data);
         finish();
+    }
+
+    private BubbleShowCaseBuilder buildBubble(View view, String title, String desc, String once){
+        return new BubbleShowCaseBuilder(this) //Activity instance
+                .title(title) //Any title for the bubble view
+                .description(desc)
+                .highlightMode(BubbleShowCase.HighlightMode.VIEW_SURFACE)
+                .backgroundColorResourceId(R.color.colorPrimary)
+                .showOnce(once)
+                .targetView(view);
     }
 
 }

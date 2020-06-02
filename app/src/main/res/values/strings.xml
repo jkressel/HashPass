@@ -30,4 +30,21 @@
     <string name="remember_phrase_title">Remember your phrase</string>
     <string name="ok">OK</string>
     <string name="new_phrase">New Phrase</string>
+    <string name="import_str">Import</string>
+    <string name="export">Export</string>
+    <string name="import_export">Import/Export</string>
+    <string name="working">Working...</string>
+    <string name="about">About</string>
+    <string name="backup_restore">Backup/Restore</string>
+    <string name="welcome">Welcome</string>
+    <string name="continue_btn">Continue</string>
+    <string name="exit_btn">Exit</string>
+    <string name="onboard_desc_1">This introduction will take you through the steps needed to set up HashPass</string>
+    <string name="onboard_title_2">Set Your Memorable Phrase</string>
+    <string name="onboard_desc_2">When you press continue, you will be asked to enter a memorable phrase. This phrase must consist of 6 words. You will be asked to enter this phrase whenever you wish to view or generate a password, because this phrase is combined with a secret stored by the app to construct the password. \n\n\n<b>YOU MUST REMEMBER THE PHRASE!</b> \n\n\nIf you forget the phrase, you can no longer construct your passwords, so please make sure you remember all 6 words.</string>
+    <string name="onboard_desc_3">HashPass Secure Input is like a keyboard, that\'s just for entering your username and password. This means that you don\'t need to use insecure copy and paste. Pressing Enable will take you to system settings, so that you can enable HashPass Secure Input as an input method.</string>
+    <string name="onboard_title_3">Enable Secure Input</string>
+    <string name="onboard_desc_4">That\'s all, you\'re ready to start using the app. If you have used the app before, and have exported passwords, you can import them using the import function, available from the main screen.</string>
+    <string name="onboard_title_4">Finish</string>
+    <string name="credits">Credits</string>
 </resources>

@@ -1,9 +1,6 @@
 package eu.japk.hashpass;
 
 import android.content.Context;
-import android.os.Environment;
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,12 +9,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.List;
-
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
 import eu.japk.hashpass.db.PasswordRecord;
 
 public class ExportDatabase {
@@ -25,12 +20,14 @@ public class ExportDatabase {
     private SecretKey sk;
     private CryptoFunctions cf;
     private SecretKey appkey;
+    private BackupHelperFunctions backupHelperFunctions;
 
     public ExportDatabase(Salt salt, SecretKey sk, SecretKey appKey){
         this.salt = salt;
         this.sk = sk;
         this.appkey = appKey;
         cf = new CryptoFunctions();
+        backupHelperFunctions = new BackupHelperFunctions(cf);
     }
 
     public void export(Context context, String sFileName, List<PasswordRecord> records) throws IOException, NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
@@ -46,17 +43,17 @@ public class ExportDatabase {
                 sb.append("\n");
                 sb.append(pr.charsAllowed);
                 sb.append("\n");
-                sb.append(encodeB64(encrypt(decrypt(pr.salt, pr.saltIV))));
+                sb.append(backupHelperFunctions.encodeB64(backupHelperFunctions.encrypt(sk, backupHelperFunctions.decrypt(pr.salt, pr.saltIV, appkey))));
                 sb.append("\n");
-                sb.append(encodeB64(cf.getIV()));
+                sb.append(backupHelperFunctions.encodeB64(cf.getIV()));
                 sb.append("\n");
-                sb.append(encodeB64(encrypt(decrypt(pr.user, pr.userIV))));
+                sb.append(backupHelperFunctions.encodeB64(backupHelperFunctions.encrypt(sk, backupHelperFunctions.decrypt(pr.user, pr.userIV, appkey))));
                 sb.append("\n");
-                sb.append(encodeB64(cf.getIV()));
+                sb.append(backupHelperFunctions.encodeB64(cf.getIV()));
                 sb.append("\n");
-                sb.append((encodeB64(encrypt(decrypt(pr.notes, pr.notesIV)))));
+                sb.append((backupHelperFunctions.encodeB64(backupHelperFunctions.encrypt(sk, backupHelperFunctions.decrypt(pr.notes, pr.notesIV, appkey)))));
                 sb.append("\n");
-                sb.append(encodeB64(cf.getIV()));
+                sb.append(backupHelperFunctions.encodeB64(cf.getIV()));
                 sb.append("\n");
             }
             writer.write(sb.toString());
@@ -68,17 +65,5 @@ public class ExportDatabase {
         File file = new File(context.getExternalFilesDir(null), "hashpass_export/");
         file.mkdirs();
         return file;
-    }
-
-    private String encodeB64(byte[] data){
-        return Base64.getEncoder().encodeToString(data);
-    }
-
-    private byte[] decrypt(byte[] cipherText, byte[] IV) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        return cf.decrypt(appkey, cipherText, IV);
-    }
-
-    private byte[] encrypt(byte[] plain) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
-        return cf.encrypt(sk, plain);
     }
 }

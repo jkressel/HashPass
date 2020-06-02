@@ -26,6 +26,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
@@ -143,6 +146,9 @@ public class ViewAndEditPassword extends AppCompatActivity {
                 }
             }
         });
+
+        buildBubble(floatingActionButton, "Secure Input", "Activate Secure Input to securely enter your username and password without the need for copy and paste", "ViewIP")
+                .show();
     }
 
 
@@ -239,6 +245,16 @@ public class ViewAndEditPassword extends AppCompatActivity {
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private BubbleShowCaseBuilder buildBubble(View view, String title, String desc, String once){
+        return new BubbleShowCaseBuilder(this) //Activity instance
+                .title(title) //Any title for the bubble view
+                .description(desc)
+                .highlightMode(BubbleShowCase.HighlightMode.VIEW_SURFACE)
+                .backgroundColorResourceId(R.color.colorPrimary)
+                .showOnce(once)
+                .targetView(view);
     }
 
     public static InputDetails getInputDetails(){

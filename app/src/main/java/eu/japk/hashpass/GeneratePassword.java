@@ -3,6 +3,7 @@ package eu.japk.hashpass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -97,6 +101,13 @@ public class GeneratePassword extends AppCompatActivity {
     });
 
 
+        new BubbleShowCaseSequence()
+                .addShowCase(buildBubble(sb, "Length", "Select the length of your generated password", "GenLen")) //First BubbleShowCase to show
+                .addShowCase(buildBubble(allowedChars, "Allowed Characters", "Removing characters will prevent those characters from appearing in a generated password.", "GenChars"))
+                .addShowCase(buildBubble(generate, "Generate", "Press to generate the password", "GenBtn"))
+                .addShowCase(buildBubble(fab, "Done", "Once satisfied with the generated password, press to return to the add password screen", "GenDone"))
+                .show();
+
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -109,6 +120,23 @@ public class GeneratePassword extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        setResult(Activity.RESULT_CANCELED);
+        return true;
+    }
+
+    private BubbleShowCaseBuilder buildBubble(View view, String title, String desc, String once){
+        return new BubbleShowCaseBuilder(this) //Activity instance
+                .title(title) //Any title for the bubble view
+                .description(desc)
+                .highlightMode(BubbleShowCase.HighlightMode.VIEW_SURFACE)
+                .backgroundColorResourceId(R.color.colorPrimary)
+                .showOnce(once)
+                .targetView(view);
     }
 
 }

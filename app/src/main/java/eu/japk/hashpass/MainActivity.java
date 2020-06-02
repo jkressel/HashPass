@@ -12,16 +12,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.SectionIndexer;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
+
+import com.elconfidencial.bubbleshowcase.BubbleShowCase;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -54,12 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
     int request_Code = 4;
+    int FIRST_CODE = 3;
+    SharedPreferences sharedPref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(getData("FirstRun")){
+            Intent first = new Intent(MainActivity.this, Onboarding.class);
+            startActivityForResult(first, FIRST_CODE);
+        }
 
         mRecordViewModel = ViewModelProviders.of(this).get(RecordViewModel.class);
 
@@ -68,16 +82,17 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FloatingActionButton fab = findViewById(R.id.fabMain);
-        fab.setSize(FloatingActionButton.SIZE_AUTO);
+        FloatingActionButton fab1 = findViewById(R.id.fabMain);
+        fab1.setSize(FloatingActionButton.SIZE_AUTO);
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddNew.class);
                 startActivity(intent);
             }
         });
+        sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
 
         mRecordViewModel.getAllRecords().observe(this, new Observer<List<PasswordRecord>>() {
             @Override
@@ -90,67 +105,19 @@ public class MainActivity extends AppCompatActivity {
         //set up the navigation drawer
         initDrawer();
 
-        SecretKeyFunctions skf = new SecretKeyFunctions();
-        try {
-            if(!skf.secretKeyExists()){
-                skf.generateKey();
-            }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        }
 
-        try {
-            Salt salt = new Salt();
-            salt.generateSalt();
-            SecretKey sk = skf.generateDerivedKey("Hello", ("boo").getBytes(), 256);
-            Toast.makeText(MainActivity.this, new String(sk.getEncoded()), Toast.LENGTH_LONG).show();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    addButton(fab1).show();
 
-        AppDatabase db = AppDatabase.getDatabase(this.getApplication());
-        PasswordRecordDAO dao = db.recordDao();
-        SecretKey appK = null;
-        try {
-            appK = skf.getKey();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
-        }
-        Salt salt = new Salt();
-        salt.generateSalt();
-        SecretKey sk = null;
-        try {
-            sk = skf.generateDerivedKey("Hello.txt", salt.getSalt().getBytes(), 256);
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    }
 
-
-        //new getAllAsyncTask(dao, sk, salt, appK, this).execute();
-       new importFile(mRecordViewModel, "Hello.txt", appK, this).execute();
-
+    private BubbleShowCaseBuilder addButton(View view){
+        return new BubbleShowCaseBuilder(this) //Activity instance
+                .title("Add New Password") //Any title for the bubble view
+                .description("Press this button to add a new password")
+                .highlightMode(BubbleShowCase.HighlightMode.VIEW_SURFACE)
+                .backgroundColorResourceId(R.color.colorPrimary)
+                .showOnce("MainFabAdd")
+                .targetView(view);
     }
 
 
@@ -179,10 +146,20 @@ public class MainActivity extends AppCompatActivity {
                         Intent i = new Intent(MainActivity.this, EnterPhrase.class);
                         i.putExtra("save", true);
                         startActivityForResult(i, request_Code);
+                        break;
+                    case R.id.import_export:
+                        Intent intent = new Intent(MainActivity.this, ImportExport.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.about:
+                        Intent intent1 = new Intent(MainActivity.this, About.class);
+                        startActivity(intent1);
+                        break;
 
                     default:
                         return true;
                 }
+                return true;
 
             }
         });
@@ -193,108 +170,31 @@ public class MainActivity extends AppCompatActivity {
         return t.onOptionsItemSelected(item);
     }
 
-
-    private static class getAllAsyncTask extends android.os.AsyncTask<Void, Void, List<PasswordRecord>> {
-
-        private PasswordRecordDAO mAsyncTaskDao;
-        List<PasswordRecord> pwList;
-        SecretKey secretKey;
-        SecretKey appkey;
-        Salt salt;
-        Context context;
-
-        getAllAsyncTask(PasswordRecordDAO dao, SecretKey secretKey, Salt salt, SecretKey ak, Context context) {
-            mAsyncTaskDao = dao;
-            this.secretKey = secretKey;
-            this.salt = salt;
-            appkey = ak;
-            this.context = context;
-        }
-
-        @Override
-        protected List<PasswordRecord> doInBackground(Void... voids) {
-            return mAsyncTaskDao.getAllUnordered();
-        }
-
-        @Override
-        protected void onPostExecute(List<PasswordRecord> passwordRecords) {
-            super.onPostExecute(passwordRecords);
-
-            ExportDatabase ed = new ExportDatabase(salt, secretKey, appkey);
-            try {
-                ed.export(context, "hashpass_db_export.txt", passwordRecords);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidAlgorithmParameterException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FIRST_CODE) {
+            if (resultCode == RESULT_OK) {
+                storeData("FirstRun", false);
             }
-
+            else{
+                finish();
+            }
         }
     }
 
 
-    private static class importFile extends android.os.AsyncTask<Void, Void, List<PasswordRecord>> {
-
-        private RecordViewModel rvm;
-        List<PasswordRecord> pwList;
-        SecretKey appkey;
-        Context context;
-        String userPass;
-
-        importFile(RecordViewModel recordViewModel, String userPass, SecretKey ak, Context context) {
-            rvm = recordViewModel;
-            appkey = ak;
-            this.context = context;
-            this.userPass = userPass;
-        }
-
-        @Override
-        protected List<PasswordRecord> doInBackground(Void... voids) {
-            ImportDatabase id = new ImportDatabase(appkey, userPass);
-            try {
-                return id.importDatabase(context, context.getExternalFilesDir(null)+"/hashpass_export/hashpass_db_export.txt");
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InvalidKeySpecException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidAlgorithmParameterException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<PasswordRecord> passwordRecords) {
-            super.onPostExecute(passwordRecords);
-
-            if(passwordRecords == null) return;
-
-            rvm.insertList(passwordRecords);
-
-
-
-        }
+    private void storeData(String key, boolean data){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(key, data);
+        editor.apply();
     }
+
+    private boolean getData(String key){
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(key,true);
+    }
+
+
 
 
 

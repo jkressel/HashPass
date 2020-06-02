@@ -1,6 +1,7 @@
 package eu.japk.hashpass;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -39,19 +41,21 @@ public class ImportDatabase {
     private Salt salt;
     private CryptoFunctions cf;
     SecretKeyFunctions skf;
+    BackupHelperFunctions backupHelperFunctions;
 
     public ImportDatabase(SecretKey appKey, String user){
         this.appKey = appKey;
         this.user = user;
         salt = new Salt();
         cf = new CryptoFunctions();
+        backupHelperFunctions = new BackupHelperFunctions(cf);
         skf = new SecretKeyFunctions();
-        password = new ArrayList<PasswordRecord>();
+        password = new ArrayList<>();
 
 
     }
 
-    public List<PasswordRecord> importDatabase(Context context, String fileName) throws IOException, NullPointerException, InvalidKeySpecException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException {
+    public List<PasswordRecord> importDatabase(Context context, Uri fileName) throws Exception {
         String name;
         int length;
         String chars;
@@ -63,54 +67,46 @@ public class ImportDatabase {
         byte[] encryptedNotes;
         byte[] notesIV;
 
-        FileInputStream is;
+        InputStream is;
         BufferedReader reader;
-        final File file = new File(fileName);
         PasswordRecord pwr;
-        if (file.exists()) {
-            Log.i("EXISTS","YAYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-            is = new FileInputStream(file);
+            try{
+                is = context.getContentResolver().openInputStream(fileName);
+            }catch (FileNotFoundException e){
+                throw new FileNotFoundException();
+            }
+
             reader = new BufferedReader(new InputStreamReader(is));
             String line = reader.readLine();
             if(line != null) this.salt.setSalt(line);
             SecretKey sk = skf.generateDerivedKey(this.user, this.salt.getSalt().getBytes(), 256);
             line = reader.readLine();
-            while(line != null){
-                name = line;
-                length = Integer.parseInt(reader.readLine());
-                chars = reader.readLine();
-                salt = reader.readLine();
-                encryptedSalt = encrypt(appKey, decrypt(decodeB64(salt), decodeB64(reader.readLine()), sk));
-                saltIV = cf.getIV();
-                line = reader.readLine();
-                encryptedUser = encrypt(appKey, decrypt(decodeB64(line), decodeB64(reader.readLine()),sk));
-                userIV = cf.getIV();
-                line = reader.readLine();
-                encryptedNotes = encrypt(appKey, decrypt(decodeB64(line), decodeB64(reader.readLine()), sk));
-                notesIV = cf.getIV();
-                line = reader.readLine();
-                pwr = new PasswordRecord(encryptedSalt, encryptedUser, encryptedNotes, name, length, chars, saltIV, userIV, notesIV);
-                password.add(pwr);
+            try {
+                while (line != null) {
+                    name = line;
+                    length = Integer.parseInt(reader.readLine());
+                    chars = reader.readLine();
+                    salt = reader.readLine();
+                    encryptedSalt = backupHelperFunctions.encrypt(appKey, backupHelperFunctions.decrypt(backupHelperFunctions.decodeB64(salt), backupHelperFunctions.decodeB64(reader.readLine()), sk));
+                    saltIV = cf.getIV();
+                    line = reader.readLine();
+                    encryptedUser = backupHelperFunctions.encrypt(appKey, backupHelperFunctions.decrypt(backupHelperFunctions.decodeB64(line), backupHelperFunctions.decodeB64(reader.readLine()), sk));
+                    userIV = cf.getIV();
+                    line = reader.readLine();
+                    encryptedNotes = backupHelperFunctions.encrypt(appKey, backupHelperFunctions.decrypt(backupHelperFunctions.decodeB64(line), backupHelperFunctions.decodeB64(reader.readLine()), sk));
+                    notesIV = cf.getIV();
+                    line = reader.readLine();
+                    pwr = new PasswordRecord(encryptedSalt, encryptedUser, encryptedNotes, name, length, chars, saltIV, userIV, notesIV);
+                    password.add(pwr);
 
 
-
-
+                }
+            }catch (Exception e){
+                throw new Exception();
             }
             return password;
-        }
-        return null;
 
     }
 
-    private byte[] decodeB64(String data){
-        return Base64.getDecoder().decode(data);
-    }
 
-    private byte[] decrypt(byte[] cipherText, byte[] IV, SecretKey sk) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        return cf.decrypt(sk, cipherText, IV);
-    }
-
-    private byte[] encrypt(SecretKey sk, byte[] plain) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
-        return cf.encrypt(sk, plain);
-    }
 }

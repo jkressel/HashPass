@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:padding="30px"
-                app:layout_constraintBottom_toTopOf="@+id/adView3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.508"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,33 +39,22 @@
                 app:layout_constraintVertical_bias="1.0"
                 tools:listitem="@layout/record_item"/>
 
-
-            <LinearLayout
-                android:id="@+id/adView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-            <LinearLayout android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/adView3">
-
-                <LinearLayout android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="end">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:id="@+id/linLayFabMain">
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/fabMain"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end|bottom"
                         android:src="@drawable/ic_add_white_24dp"
                         android:contentDescription="New Password"
                         android:layout_margin="20dp"/>
-                </LinearLayout>
-            </LinearLayout>
+</LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
     <!--

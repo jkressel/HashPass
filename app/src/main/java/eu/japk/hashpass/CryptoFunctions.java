@@ -13,10 +13,13 @@ import javax.crypto.spec.GCMParameterSpec;
 
 public class CryptoFunctions {
 
+    private final String CIPHER_INSTANCE = "AES/GCM/NoPadding";
+    private final int KEY_LENGTH = 128;
+
     private byte[] IV;
 
     public byte[] encrypt(SecretKey secretKey, byte[] data) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
         IV = cipher.getIV();
@@ -24,8 +27,8 @@ public class CryptoFunctions {
     }
 
     public byte[] decrypt(SecretKey secretKey, byte[] ciphertext, byte[] eIV) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, eIV);
+        Cipher cipher = Cipher.getInstance(CIPHER_INSTANCE);
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(KEY_LENGTH, eIV);
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmParameterSpec);
         return cipher.doFinal(ciphertext);
