@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashPhrase {
 
+    private final String SHA_INSTANCE = "SHA-512";
+
     public byte[] hashPhrase(byte[] phrase, Salt salt){
         MessageDigest md = getMDInstance();
         if(md != null){
@@ -19,7 +21,7 @@ public class HashPhrase {
     private MessageDigest getMDInstance(){
         MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("SHA-512");
+            md = MessageDigest.getInstance(SHA_INSTANCE);
             return md;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

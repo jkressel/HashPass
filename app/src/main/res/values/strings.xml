@@ -47,4 +47,14 @@
     <string name="onboard_desc_4">That\'s all, you\'re ready to start using the app. If you have used the app before, and have exported passwords, you can import them using the import function, available from the main screen.</string>
     <string name="onboard_title_4">Finish</string>
     <string name="credits">Credits</string>
+    <string name="secure_input_bubble_title">Secure Input</string>
+    <string name="secure_input_bubble_desc">Activate Secure Input to securely enter your username and password without the need for copy and paste</string>
+    <string name="length_bubble_title">Length</string>
+    <string name="length_bubble_desc">Select the length of your generated password</string>
+    <string name="chars_bubble_title">Allowed Characters</string>
+    <string name="chars_bubble_desc">Removing characters will prevent those characters from appearing in a generated password.</string>
+    <string name="gen_bubble_title">Generate</string>
+    <string name="gen_bubble_desc">Press to generate the password</string>
+    <string name="done_bubble_title">Done</string>
+    <string name="done_bubble_desc">Once satisfied with the generated password, press to return to the add password screen</string>
 </resources>

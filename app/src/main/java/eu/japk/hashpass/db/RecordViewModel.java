@@ -1,7 +1,6 @@
 package eu.japk.hashpass.db;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -29,8 +28,6 @@ public class RecordViewModel extends AndroidViewModel {
     }
     public void insertList(List<PasswordRecord> record) { mRepository.insertList(record);
     }
-
-    public void deleteItem(PasswordRecord record) { mRepository.deleteItem(record);}
 
     public void updateItem(PasswordRecord record) { mRepository.updatePassword(record);}
 

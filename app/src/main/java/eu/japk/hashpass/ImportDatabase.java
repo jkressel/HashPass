@@ -2,35 +2,13 @@ package eu.japk.hashpass;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
 import eu.japk.hashpass.db.PasswordRecord;
 
 public class ImportDatabase {
@@ -76,8 +54,13 @@ public class ImportDatabase {
                 throw new FileNotFoundException();
             }
 
+
+        if (is != null) {
             reader = new BufferedReader(new InputStreamReader(is));
-            String line = reader.readLine();
+        }else{
+            throw new Exception();
+        }
+        String line = reader.readLine();
             if(line != null) this.salt.setSalt(line);
             SecretKey sk = skf.generateDerivedKey(this.user, this.salt.getSalt().getBytes(), 256);
             line = reader.readLine();
@@ -102,7 +85,7 @@ public class ImportDatabase {
 
                 }
             }catch (Exception e){
-                throw new Exception();
+                throw new Exception(e);
             }
             return password;
 

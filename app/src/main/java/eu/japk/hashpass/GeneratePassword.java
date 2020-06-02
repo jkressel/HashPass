@@ -2,7 +2,6 @@ package eu.japk.hashpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,11 +11,9 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class GeneratePassword extends AppCompatActivity {
@@ -102,10 +99,10 @@ public class GeneratePassword extends AppCompatActivity {
 
 
         new BubbleShowCaseSequence()
-                .addShowCase(buildBubble(sb, "Length", "Select the length of your generated password", "GenLen")) //First BubbleShowCase to show
-                .addShowCase(buildBubble(allowedChars, "Allowed Characters", "Removing characters will prevent those characters from appearing in a generated password.", "GenChars"))
-                .addShowCase(buildBubble(generate, "Generate", "Press to generate the password", "GenBtn"))
-                .addShowCase(buildBubble(fab, "Done", "Once satisfied with the generated password, press to return to the add password screen", "GenDone"))
+                .addShowCase(buildBubble(sb, getString(R.string.length_bubble_title), getString(R.string.length_bubble_desc), "GenLen"))
+                .addShowCase(buildBubble(allowedChars, getString(R.string.chars_bubble_title), getString(R.string.chars_bubble_desc), "GenChars"))
+                .addShowCase(buildBubble(generate, getString(R.string.gen_bubble_title), getString(R.string.gen_bubble_desc), "GenBtn"))
+                .addShowCase(buildBubble(fab, getString(R.string.done_bubble_title), getString(R.string.done_bubble_desc), "GenDone"))
                 .show();
 
     }
@@ -130,8 +127,8 @@ public class GeneratePassword extends AppCompatActivity {
     }
 
     private BubbleShowCaseBuilder buildBubble(View view, String title, String desc, String once){
-        return new BubbleShowCaseBuilder(this) //Activity instance
-                .title(title) //Any title for the bubble view
+        return new BubbleShowCaseBuilder(this)
+                .title(title)
                 .description(desc)
                 .highlightMode(BubbleShowCase.HighlightMode.VIEW_SURFACE)
                 .backgroundColorResourceId(R.color.colorPrimary)

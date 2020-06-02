@@ -2,25 +2,14 @@ package eu.japk.hashpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
 
 public class Onboarding extends AppCompatActivity {
 
@@ -48,18 +37,8 @@ public class Onboarding extends AppCompatActivity {
             if(!skf.secretKeyExists()){
                 skf.generateKey();
             }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Toast.makeText(Onboarding.this, "An unexpected error occurred when setting up the encryption key for the app", Toast.LENGTH_LONG).show();
         }
 
         continueBtn.setOnClickListener(new View.OnClickListener() {
@@ -77,11 +56,7 @@ public class Onboarding extends AppCompatActivity {
                         startActivityForResult(i, RESULT_CODE);
                         break;
                     case 3:
-                        SharedPreferences sharedPref = Onboarding.this.getPreferences(Context.MODE_PRIVATE);
                         startActivity(new Intent("android.settings.INPUT_METHOD_SETTINGS"));
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putBoolean("firstKeyboard", false);
-                        editor.apply();
                         animateTextChange(getString(R.string.onboard_title_4), title);
                         animateTextChange(getString(R.string.onboard_desc_4), content);
                         continueBtn.setText("Finish");

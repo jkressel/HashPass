@@ -11,7 +11,6 @@ public class RecordRepository {
 
     private PasswordRecordDAO recordDao;
     private LiveData<List<PasswordRecord>> allRecords;
-    private LiveData<PasswordRecord> getOne;
     AppDatabase db;
 
     public RecordRepository(Application application) {
@@ -25,13 +24,11 @@ public class RecordRepository {
     }
 
 
-    LiveData<PasswordRecord> getRecord(int id){return recordDao.getRecord(id);}
-
-    public void insert(PasswordRecord record){
+    void insert(PasswordRecord record){
         new insertAsyncTask(recordDao).execute(record);
     }
 
-    public void insertList(List<PasswordRecord> record){
+    void insertList(List<PasswordRecord> record){
         new insertListAsyncTask(recordDao).execute(record);
     }
 
@@ -41,7 +38,7 @@ public class RecordRepository {
         new deleteAsyncTask(recordDao).execute(record);
     }
 
-    public void updatePassword(PasswordRecord record) {new updateAsyncTask(recordDao).execute(record);}
+    void updatePassword(PasswordRecord record) {new updateAsyncTask(recordDao).execute(record);}
 
     private static class insertAsyncTask extends AsyncTask<PasswordRecord, Void, Void> {
 

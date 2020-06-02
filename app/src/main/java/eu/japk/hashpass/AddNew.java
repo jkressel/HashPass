@@ -3,34 +3,20 @@ package eu.japk.hashpass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+import java.util.Objects;
 import javax.crypto.SecretKey;
-
 import eu.japk.hashpass.db.PasswordRecord;
 import eu.japk.hashpass.db.RecordViewModel;
 
@@ -71,7 +57,7 @@ public class AddNew extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbarAddNew);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mRecordViewModel = ViewModelProviders.of(this).get(RecordViewModel.class);

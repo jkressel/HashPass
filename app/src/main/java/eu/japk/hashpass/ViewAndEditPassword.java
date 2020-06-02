@@ -3,39 +3,26 @@ package eu.japk.hashpass;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
-
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
-import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.Objects;
-
-import eu.japk.hashpass.db.AppDatabase;
 import eu.japk.hashpass.db.PasswordRecord;
-import eu.japk.hashpass.db.PasswordRecordDAO;
 import eu.japk.hashpass.db.RecordRepository;
 
 public class ViewAndEditPassword extends AppCompatActivity {
@@ -63,91 +50,68 @@ public class ViewAndEditPassword extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_and_edit_password);
 
+
+        //get record repository
         rr = new RecordRepository(getApplication());
 
+
+        //set toolbar
         Toolbar toolbar = findViewById(R.id.toolbarView);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-        Intent i = getIntent();
-
-        try{
-            uid = i.getIntExtra("id", 0);
-            user = i.getStringExtra("user");
-            salt = i.getStringExtra("salt");
-            notes = i.getStringExtra("notes");
-            length = i.getIntExtra("length", 30);
-            name = i.getStringExtra("name");
-            allowedChars = i.getStringExtra("charsAllowed");
-
-            nameET = findViewById(R.id.pwNameView);
-            userET = findViewById(R.id.pwUserView);
-            notesET = findViewById(R.id.pwNotesView);
-            pwET = findViewById(R.id.pwView);
-
-
-            Intent intent = new Intent(this, EnterPhrase.class);
-            startActivityForResult(intent, request_Code);
+        //get intent extras
+        getIntentExtras();
 
 
 
-        }catch(Exception e){
-            Toast.makeText(this, "An error has occurred!" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            onBackPressed();
-        }
+        //get phrase
+        Intent intent = new Intent(this, EnterPhrase.class);
+        startActivityForResult(intent, request_Code);
 
 
+
+        //set password copy button
         ImageButton copyPass = findViewById(R.id.viewBtnCopyPwd);
         copyPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("password", pwET.getText().toString());
-                assert clipboard != null;
-                clipboard.setPrimaryClip(clip);
+                copyToClipboard(pwET.getText().toString(), "password");
                 Toast.makeText(ViewAndEditPassword.this, "Password copied", Toast.LENGTH_LONG).show();
             }
         });
 
+
+        //set user copy button
         ImageButton copyUser = findViewById(R.id.viewBtnCopyUser);
         copyUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("username", userET.getText().toString());
-                assert clipboard != null;
-                clipboard.setPrimaryClip(clip);
+                copyToClipboard(userET.getText().toString(), "username");
                 Toast.makeText(ViewAndEditPassword.this, "Username copied", Toast.LENGTH_LONG).show();
             }
         });
 
 
+
+        //set hashpass secure input selection
         FloatingActionButton floatingActionButton = findViewById(R.id.fabKeyboard);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 inputDetails = new InputDetails(user, pw);
-
-                SharedPreferences sharedPref = ViewAndEditPassword.this.getPreferences(Context.MODE_PRIVATE);
-                boolean firstKeyboard = sharedPref.getBoolean("firstKeyboard", true);
-                if(firstKeyboard){
-                    startActivity(new Intent("android.settings.INPUT_METHOD_SETTINGS"));
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putBoolean("firstKeyboard", false);
-                    editor.apply();
-                }else {
-                    InputMethodManager mgr =
-                            (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (mgr != null) {
                         mgr.showInputMethodPicker();
                     }
                 }
-            }
         });
 
-        buildBubble(floatingActionButton, "Secure Input", "Activate Secure Input to securely enter your username and password without the need for copy and paste", "ViewIP")
+
+        //start tutorial
+        buildBubble(floatingActionButton, getString(R.string.secure_input_bubble_title), getString(R.string.secure_input_bubble_desc), "ViewIP")
                 .show();
     }
 
@@ -259,6 +223,35 @@ public class ViewAndEditPassword extends AppCompatActivity {
 
     public static InputDetails getInputDetails(){
         return inputDetails;
+    }
+
+    private void copyToClipboard(String data, String label){
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, data);
+        assert clipboard != null;
+        clipboard.setPrimaryClip(clip);
+    }
+
+    private void getIntentExtras() {
+        Intent i = getIntent();
+
+        try {
+            uid = i.getIntExtra("id", 0);
+            user = i.getStringExtra("user");
+            salt = i.getStringExtra("salt");
+            notes = i.getStringExtra("notes");
+            length = i.getIntExtra("length", 30);
+            name = i.getStringExtra("name");
+            allowedChars = i.getStringExtra("charsAllowed");
+
+            nameET = findViewById(R.id.pwNameView);
+            userET = findViewById(R.id.pwUserView);
+            notesET = findViewById(R.id.pwNotesView);
+            pwET = findViewById(R.id.pwView);
+        } catch (Exception e) {
+            Toast.makeText(this, "An error has occurred!" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            onBackPressed();
+        }
     }
 
 }

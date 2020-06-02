@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.Guideline;
-
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -19,26 +18,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.Arrays;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import eu.japk.hashpass.db.PasswordRecord;
 
 public class EnterPhrase extends AppCompatActivity {
 
@@ -151,24 +135,8 @@ public class EnterPhrase extends AppCompatActivity {
                                     askSave();
 
                                 }
-                            } catch (KeyStoreException e) {
-                                e.printStackTrace();
-                            } catch (CertificateException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchPaddingException e) {
-                                e.printStackTrace();
-                            } catch (InvalidKeyException e) {
-                                e.printStackTrace();
-                            } catch (UnrecoverableEntryException e) {
-                                e.printStackTrace();
-                            } catch (IllegalBlockSizeException e) {
-                                e.printStackTrace();
-                            } catch (BadPaddingException e) {
-                                e.printStackTrace();
+                            } catch (Exception e) {
+                                Toast.makeText(EnterPhrase.this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
                             }
                         } else {
                             String salt1 = getData("Salt1");
@@ -207,26 +175,8 @@ public class EnterPhrase extends AppCompatActivity {
                                     }
 
                                 }
-                            } catch (KeyStoreException e) {
-                                e.printStackTrace();
-                            } catch (CertificateException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchAlgorithmException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } catch (NoSuchPaddingException e) {
-                                e.printStackTrace();
-                            } catch (InvalidAlgorithmParameterException e) {
-                                e.printStackTrace();
-                            } catch (InvalidKeyException e) {
-                                e.printStackTrace();
-                            } catch (BadPaddingException e) {
-                                e.printStackTrace();
-                            } catch (IllegalBlockSizeException e) {
-                                e.printStackTrace();
-                            } catch (UnrecoverableEntryException e) {
-                                e.printStackTrace();
+                            } catch (Exception e) {
+                                Toast.makeText(EnterPhrase.this, "An unexpected error occurred", Toast.LENGTH_LONG).show();
                             }
 
 

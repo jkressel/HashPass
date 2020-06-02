@@ -2,48 +2,29 @@ package eu.japk.hashpass;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.ParcelFileDescriptor;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
 import eu.japk.hashpass.db.AppDatabase;
 import eu.japk.hashpass.db.PasswordRecord;
 import eu.japk.hashpass.db.PasswordRecordDAO;
@@ -122,8 +103,6 @@ public class ImportExport extends AppCompatActivity {
             public void onClick(View v) {
                 if (!pw.getText().toString().isEmpty()) {
                     pass = pw.getText().toString();
-                    if (!checkPermission()) {
-                        requestPermission();
                         Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
                         chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
                         chooseFile.setType("text/plain");
@@ -131,17 +110,6 @@ public class ImportExport extends AppCompatActivity {
                                 Intent.createChooser(chooseFile, "Choose a file"),
                                 12
                         );
-
-
-                    } else {
-                        Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                        chooseFile.setType("text/plain");
-                        startActivityForResult(
-                                Intent.createChooser(chooseFile, "Choose a file"),
-                                12
-                        );
-                    }
                 }else{
                     Toast.makeText(ImportExport.this, "You must enter a password to decrypt the database", Toast.LENGTH_LONG).show();
                 }
@@ -169,9 +137,9 @@ public class ImportExport extends AppCompatActivity {
         SecretKey secretKey;
         SecretKey appkey;
         Salt salt;
-        Context context;
-        TextView working;
-        ProgressBar pb;
+        private Context context;
+        private TextView working;
+        private ProgressBar pb;
 
         getAllAsyncTask(PasswordRecordDAO dao, SecretKey secretKey, Salt salt, SecretKey ak, Context context, TextView tv, ProgressBar pb) {
             mAsyncTaskDao = dao;
@@ -229,35 +197,6 @@ public class ImportExport extends AppCompatActivity {
                 new importFile(mRecordViewModel, pass, appK, this, working, pb, path).execute();
 
 
-        }
-    }
-
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(ImportExport.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(ImportExport.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-        } else {
-            ActivityCompat.requestPermissions(ImportExport.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.e("value", "Permission Granted, Now you can use local drive .");
-            } else {
-                Log.e("value", "Permission Denied, You cannot use local drive .");
-            }
-            break;
         }
     }
 

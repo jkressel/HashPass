@@ -2,39 +2,21 @@ package eu.japk.hashpass;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
+import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
 import java.util.List;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-
 import eu.japk.hashpass.db.PasswordRecord;
-import eu.japk.hashpass.db.RecordViewModel;
 
 public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.RecordViewHolder> {
     private final LayoutInflater mInflater;
-    private List<PasswordRecord> mRecords; // Cached copy of words
+    private List<PasswordRecord> mRecords;
     private Context context;
 
     RecordListAdapter(Context context) { mInflater = LayoutInflater.from(context); this.context = context; }
@@ -81,8 +63,6 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
                     byte[] decryptNotes = cf.decrypt(sk, current.notes, current.notesIV);
                     byte[] decryptSalt = cf.decrypt(sk, current.salt, current.saltIV);
 
-                    Log.i("SAlt", new String(decryptSalt));
-
 
                     Intent i = new Intent(context, ViewAndEditPassword.class);
                     i.putExtra("id", current.uid);
@@ -93,29 +73,12 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
                     i.putExtra("notes", new String(decryptNotes));
                     i.putExtra("user", new String(decryptUser));
                     context.startActivity(i);
-                    Log.i("ID",""+current.uid);
-                } catch (UnrecoverableEntryException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    e.printStackTrace();
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Toast.makeText(context, "An unexpected error occurred", Toast.LENGTH_LONG).show();
                 }
             }
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Toast.makeText(context, "An unexpected error occurred", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -124,35 +87,6 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
         notifyDataSetChanged();
     }
 
-    void refreshRecords(List<PasswordRecord> records){
-        mRecords = records;
-        notifyDataSetChanged();
-    }
-
-    int getPosition(List<PasswordRecord> records, int id){
-        return getIndexOf(records, id);
-    }
-
-    public static int getIndexOf(List<PasswordRecord> list, int id) {
-        int pos = 0;
-
-        for(PasswordRecord myObj : list) {
-            if(id == myObj.uid)
-                return pos;
-            pos++;
-        }
-
-        return -1;
-    }
-
-    void removed(int position){
-        mRecords.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, getItemCount());
-    }
-    public List<PasswordRecord> getList(){
-        return this.mRecords;
-    }
 
     @Override
     public int getItemCount() {
