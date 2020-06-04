@@ -24,7 +24,6 @@ public class About extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Button licence = findViewById(R.id.bubbleLicence);
-        Button support = findViewById(R.id.support);
 
         licence.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,15 +52,6 @@ public class About extends AppCompatActivity {
             }
         });
 
-        support.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://japk.eu/donate";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-            }
-        });
     }
 
     @Override

@@ -61,7 +61,7 @@ public class ExportDatabase {
     }
 
     private File getFile(Context context){
-        File file = new File(context.getExternalFilesDir(null), "hashpass_export/");
+        File file = new File(context.getExternalFilesDir(null), "PassHash_export/");
         file.mkdirs();
         return file;
     }

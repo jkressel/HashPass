@@ -165,7 +165,7 @@ public class ImportExport extends AppCompatActivity {
             List<PasswordRecord> list = mAsyncTaskDao.getAllUnordered();
             ExportDatabase ed = new ExportDatabase(salt, secretKey, appkey);
             try {
-                ed.export(context, "hashpass_db_export.txt", list);
+                ed.export(context, "PassHash_db_export.txt", list);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -179,7 +179,7 @@ public class ImportExport extends AppCompatActivity {
             super.onPostExecute(passwordRecords);
 
 
-            working.setText("Successfully exported to " + context.getExternalFilesDir(null) + "/hashpass_export/hashpass_db_export.txt"
+            working.setText("Successfully exported to " + context.getExternalFilesDir(null) + "/PassHash_export/PassHash_db_export.txt"
             );
             working.setTextSize((float)14.5);
             pb.setVisibility(View.GONE);

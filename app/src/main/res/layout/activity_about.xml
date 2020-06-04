@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="HashPass © John Kressel, 2020"
+        android:text="PassHash © John Kressel, 2020"
         app:layout_constraintTop_toBottomOf="@+id/toolbarAbout"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -27,21 +27,11 @@
         android:padding="20dp"
         android:textSize="25sp"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Support The App"
-        android:id="@+id/support"
-        app:layout_constraintTop_toBottomOf="@+id/copyrightTV"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:textColor="#ffffff"/>
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/thanksTV"
-        app:layout_constraintTop_toBottomOf="@+id/support"
+        app:layout_constraintTop_toBottomOf="@+id/copyrightTV"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_margin="30dp"
