@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 import java.util.List;
 import javax.crypto.SecretKey;
 import eu.japk.hashpass.db.PasswordRecord;
@@ -17,6 +19,7 @@ import eu.japk.hashpass.db.PasswordRecord;
 public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.RecordViewHolder> {
     private final LayoutInflater mInflater;
     private List<PasswordRecord> mRecords;
+    private List<PasswordRecord> copy;
     private Context context;
 
     RecordListAdapter(Context context) { mInflater = LayoutInflater.from(context); this.context = context; }
@@ -84,6 +87,7 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
 
     void setRecords(List<PasswordRecord> records){
         mRecords = records;
+        copy = new ArrayList<>(mRecords);
         notifyDataSetChanged();
     }
 
@@ -109,5 +113,20 @@ public class RecordListAdapter extends RecyclerView.Adapter<RecordListAdapter.Re
             fab = itemView.findViewById(R.id.listFAB);
             ll = itemView.findViewById(R.id.pwLay);
         }
+    }
+
+    public void filter(String text) {
+        mRecords.clear();
+        if(text.isEmpty()){
+            mRecords.addAll(copy);
+        } else{
+            text = text.toLowerCase();
+            for(PasswordRecord item: copy){
+                if(item.name.contains(text)){
+                    mRecords.add(item);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 }

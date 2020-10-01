@@ -3,11 +3,15 @@ package eu.japk.hashpass;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import com.elconfidencial.bubbleshowcase.BubbleShowCase;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
@@ -40,6 +44,7 @@ public class AddNew extends AppCompatActivity {
         final EditText name = findViewById(R.id.pwName);
         final EditText user = findViewById(R.id.pwUser);
         final EditText notes = findViewById(R.id.pwNotes);
+        ImageButton copyNewPassword = findViewById(R.id.pwCopy);
         pass = findViewById(R.id.pw);
 
         Intent i1 = getIntent();
@@ -68,6 +73,16 @@ public class AddNew extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(AddNew.this, GeneratePassword.class);
                 startActivityForResult(i, request_Code);
+            }
+        });
+
+        copyNewPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (password != null){
+                    copyToClipboard(password, "password");
+                    Toast.makeText(AddNew.this, "Password copied", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -159,6 +174,13 @@ public class AddNew extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void copyToClipboard(String data, String label){
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(label, data);
+        assert clipboard != null;
+        clipboard.setPrimaryClip(clip);
     }
 
 }
