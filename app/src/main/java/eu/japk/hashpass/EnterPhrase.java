@@ -4,6 +4,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.Guideline;
+import androidx.preference.PreferenceManager;
+
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
@@ -41,6 +43,7 @@ public class EnterPhrase extends AppCompatActivity {
     boolean save = false;
     SharedPreferences sharedPref;
     KeyPhrase kp;
+    SharedPreferences appShared;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +66,8 @@ public class EnterPhrase extends AppCompatActivity {
          glLeftBottom= findViewById(R.id.bottom_left_guide);
          glRightBottom = findViewById(R.id.bottom_right_guide);
 
-        sharedPref = EnterPhrase.this.getPreferences(Context.MODE_PRIVATE);
+         sharedPref = EnterPhrase.this.getPreferences(Context.MODE_PRIVATE);
+         appShared = PreferenceManager.getDefaultSharedPreferences(this);
 
 
          //check if the phrase should be stored
@@ -71,6 +75,12 @@ public class EnterPhrase extends AppCompatActivity {
         Intent i = getIntent();
         if(i.hasExtra("save")){
             save = true;
+        }
+
+        //check if the phrase has already been entered and if it should only be entered once
+        SharedPreferences appShared = PreferenceManager.getDefaultSharedPreferences(this);
+        if(appShared.getBoolean("passonce", false) && ((HashPass)this.getApplication()).getPhraseEntered()) {
+            returnResult(((HashPass) this.getApplication()).getPhrase());
         }
 
 
@@ -169,7 +179,7 @@ public class EnterPhrase extends AppCompatActivity {
                                     CryptoFunctions cryptoFunctions = new CryptoFunctions();
                                     byte[] decrypted = cryptoFunctions.decrypt(secretKeyFunctions.getKey(), Base64.decode(getData("hash"), Base64.DEFAULT), Base64.decode(getData("hashIV"), Base64.DEFAULT));
                                     if (Arrays.equals(decrypted, hash)) {
-                                        returnResult();
+                                        returnResult(kp.getPhrase());
                                     } else {
                                         askProceed();
                                     }
@@ -381,8 +391,7 @@ public class EnterPhrase extends AppCompatActivity {
                 .setTitle(R.string.remember_phrase_title);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-                returnResult();
+                returnResult(kp.getPhrase());
             }
         });
         AlertDialog alertDialog = builder.create();
@@ -396,7 +405,7 @@ public class EnterPhrase extends AppCompatActivity {
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                returnResult();
+                returnResult(kp.getPhrase());
             }
         });
         builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -409,9 +418,14 @@ public class EnterPhrase extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void returnResult(){
+    private void returnResult(String phrase){
+
+        if (optionSet("passonce", false)) {
+            ((HashPass) EnterPhrase.this.getApplication()).setPhrase(phrase);
+            ((HashPass) EnterPhrase.this.getApplication()).setPhraseEntered(true);
+        }
         Intent data = new Intent();
-        data.putExtra("phrase", kp.getPhrase());
+        data.putExtra("phrase", phrase);
         setResult(RESULT_OK, data);
         finish();
     }
@@ -424,6 +438,10 @@ public class EnterPhrase extends AppCompatActivity {
                 .backgroundColorResourceId(R.color.colorPrimary)
                 .showOnce(once)
                 .targetView(view);
+    }
+
+    private boolean optionSet(String key, boolean defaultVal) {
+        return appShared.getBoolean(key, defaultVal);
     }
 
 }

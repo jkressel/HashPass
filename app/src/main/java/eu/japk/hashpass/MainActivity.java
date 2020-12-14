@@ -134,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
                         Intent intent1 = new Intent(MainActivity.this, About.class);
                         startActivity(intent1);
                         break;
+                    case R.id.settings:
+                        Intent intent2 = new Intent(MainActivity.this, SettingsActivity.class);
+                        startActivity(intent2);
 
                     default:
                         return true;
@@ -202,8 +205,11 @@ public class MainActivity extends AppCompatActivity {
         return sharedPref.getBoolean(key,true);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((HashPass) MainActivity.this.getApplication()).setPhraseEntered(false);
+        ((HashPass) MainActivity.this.getApplication()).setPhrase(null);
 
-
-
-
+    }
 }

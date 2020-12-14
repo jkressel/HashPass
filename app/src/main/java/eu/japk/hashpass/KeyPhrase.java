@@ -1,5 +1,7 @@
 package eu.japk.hashpass;
 
+import android.app.Application;
+
 public class KeyPhrase {
     private String word1 = null;
     private String word2 = null;

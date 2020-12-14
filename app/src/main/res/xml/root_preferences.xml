@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <PreferenceCategory app:title="@string/general">
+
+        <SwitchPreferenceCompat
+            app:key="passonce"
+            app:summaryOff="Require phrase to be entered each time"
+            app:summaryOn="Only ask for phrase once and remember it while the app is in use"
+            app:title="Only ask for phrase once" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
